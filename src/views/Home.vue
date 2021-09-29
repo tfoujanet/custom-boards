@@ -1,18 +1,54 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-layout fill-height>
+    <v-alert color="error" icon="warning" v-if="!isLogged">
+      Aucune info de connexion, veuillez saisir des infos de connexion dans les
+      paramètres.
+    </v-alert>
+    <template v-else>
+      <v-container fluid>
+        <v-alert type="info" text dense v-if="!boards.length">
+          Vous n'avez pas encore de boards, vous pouvez en créer un en cliquant
+          sur le bouton '+'
+        </v-alert>
+        <v-row>
+          <v-col v-for="(board, i) in boards" :key="i">
+            <v-card
+              style="cursor: pointer"
+              @click="$router.push(`/board/${board.id}`)"
+            >
+              <v-card-title>{{ board.name }}</v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+    <v-btn
+      elevation="2"
+      fixed
+      fab
+      bottom
+      right
+      :disabled="!isLogged"
+      color="success"
+      @click="$router.push('/new-board')"
+    >
+      <v-icon>add</v-icon>
+    </v-btn>
+  </v-layout>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
+  name: "Home",
+
+  computed: {
+    isLogged() {
+      const { token, organization } = this.$store.state.auth || {};
+      return !!token && !!organization;
+    },
+    boards() {
+      return this.$store.state.boards.list || [];
+    },
+  },
+};
 </script>
