@@ -3,20 +3,22 @@ import Vuex from "vuex";
 import { initAuth } from "./modules/auth";
 import { referential } from "./modules/referential";
 import { initBoards } from "./modules/boards";
+import workItems from "./modules/work-items";
 import { storePlugin, loadState } from "./saveStatePlugin";
 
 Vue.use(Vuex);
 
-const savedState = loadState();
+const { auth, boards } = loadState();
 
 export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
   modules: {
-    auth: initAuth(savedState),
+    auth: initAuth(auth),
     referential,
-    boards: initBoards(savedState),
+    boards: initBoards(boards),
+    workItems
   },
   plugins: [storePlugin],
 });

@@ -27,7 +27,7 @@ const mutations = {
 
 export const initAuth = (savedState) => ({
   namespaced: true,
-  state: { ...state, ...(savedState.auth || {}) },
+  state: { ...state, ...(savedState || {}) },
   actions,
   mutations,
 });

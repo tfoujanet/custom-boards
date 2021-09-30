@@ -1,9 +1,13 @@
 <template>
   <v-layout fill-height>
-    <v-alert color="error" icon="warning" v-if="!isLogged">
-      Aucune info de connexion, veuillez saisir des infos de connexion dans les
-      paramètres.
-    </v-alert>
+    <v-row v-if="!isLogged" justify="center">
+      <v-col cols="6">
+        <v-alert color="error" icon="warning">
+          Aucune info de connexion, veuillez saisir des infos de connexion dans
+          les paramètres.
+        </v-alert>
+      </v-col>
+    </v-row>
     <template v-else>
       <v-container fluid>
         <v-alert type="info" text dense v-if="!boards.length">

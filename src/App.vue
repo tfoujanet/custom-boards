@@ -1,6 +1,8 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
+      <component v-if="actionBar" :is="actionBar" />
+
       <v-spacer></v-spacer>
 
       <v-btn icon text @click="$router.push('/settings')">
@@ -17,12 +19,25 @@
 </template>
 
 <script>
+import BoardFilter from "./components/BoardFilter.vue";
 export default {
   name: "App",
+  components: { BoardFilter },
 
   data: () => ({
     //
   }),
+
+  computed: {
+    actionBar() {
+      switch(this.$route.name) {
+        case "Board":
+          return BoardFilter;
+        default:
+          return undefined;
+      }
+    }
+  },
 
   mounted() {
     this.$store.dispatch("auth/connect");

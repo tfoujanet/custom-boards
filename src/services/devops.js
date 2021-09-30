@@ -80,17 +80,35 @@ export const getWorkItemTypes = (client, projectId) =>
       .catch((e) => reject(e));
   });
 
-export const getWorkItems = (client, projectId, teamId, iteration) =>
+export const getIterationWorkItems = (client, projectId, teamId, iteration) =>
   new Promise((resolve, reject) => {
     client
       .getWorkApi()
       .then((api) => {
         api
           .getIterationWorkItems({ projectId, teamId }, iteration)
-          .then((wi) => {
-            resolve(wi);
+          .then(({ workItemRelations }) => {
+            resolve(workItemRelations.reduce((acc, curr) => {
+              const workItemIds = [curr.target?.id, curr.source?.id]
+                .filter(_ => !!_)
+                .filter(_ => !acc.some(c => c === _));
+
+              return [...acc, ...workItemIds];
+            }, []));
           })
           .catch((e) => reject(e));
       })
       .catch((e) => reject(e));
   });
+
+export const getWorkItems = (client, ids) => new Promise((resolve, reject) => {
+  client.getWorkItemTrackingApi().then(api => {
+    api.getWorkItems(ids, ["System.WorkItemType", "System.State", "System.AssignedTo", "System.Title"]).then(workItems => resolve(workItems.map(_ => ({
+      id: _.id,
+      type: _.fields["System.WorkItemType"],
+      assignedTo: _.fields["System.AssignedTo"]?.displayName,
+      state: _.fields["System.State"],
+      title: _.fields["System.Title"]
+    })))).catch(e => reject(e));
+  }).catch(e => reject(e));
+});

@@ -42,6 +42,12 @@ const actions = {
   },
 };
 
+const getters = {
+  currentIteration(state) {
+    return state.iterations.find(_ => _.current);
+  }
+};
+
 const mutations = {
   [PROJECTS_LOADED](state, projects) {
     state.projects = projects;
@@ -60,6 +66,7 @@ const mutations = {
 export const referential = {
   namespaced: true,
   state,
+  getters,
   actions,
   mutations,
 };
