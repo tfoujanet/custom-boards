@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon text @click="$router.push('/settings')">
-        <v-icon>settings</v-icon>
+        <v-icon>account_circle</v-icon>
       </v-btn>
     </v-app-bar>
 

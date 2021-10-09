@@ -39,6 +39,7 @@ const actions = {
   selectBoard({ commit, state, dispatch }, id) {
     commit(BOARD_SELECTED, id);
     const { team, project } = state.list.find((_) => _.id === id) || {};
+    dispatch("referential/loadProjects", undefined, { root: true });
     dispatch(
       "referential/loadIterations",
       { teamId: team, projectId: project },
@@ -58,15 +59,20 @@ const getters = {
     const filteredWorkItems = state.selectedMembers.length
       ? workItems.filter(_ => state.selectedMembers.includes(_.assignedTo))
       : workItems;
+    const { organization } = rootState.auth;
+    const { name } = rootState.referential.projects.find(_ => _.id === selected.project) || {};
     return selected ?
-    {
-      ...selected,
-      columns: (selected.columns || []).map(c => ({
-        label: c.label,
-        workItems: filteredWorkItems.filter(wi => c.columns[wi.type].includes(wi.state))
-      }))
-    }
-    : { columns: [] };
+      {
+        ...selected,
+        columns: (selected.columns || []).map(c => ({
+          label: c.label,
+          workItems: filteredWorkItems.filter(wi => c.columns[wi.type].includes(wi.state)).map(wi => ({
+            ...wi,
+            url: `https://dev.azure.com/${organization}/${name}/_workitems/edit/${wi.id}/`
+          }))
+        }))
+      }
+      : { columns: [] };
   }
 }
 
