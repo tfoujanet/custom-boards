@@ -5,20 +5,15 @@
       :value="organization"
       @blur="organization = $event.target.value"
     ></v-text-field>
-    <v-text-field
-      label="Token"
-      :value="token"
-      @blur="token = $event.target.value"
-      hint="Ce token doit être un Personal Access Token à générer depuis Azure DevOps"
-      persistent-hint
-      append-outer-icon="help"
-      @click:append-outer="showTokenHelp()"
-    ></v-text-field>
+    <personal-access-token v-model="token" />
   </v-layout>
 </template>
 
 <script>
+import PersonalAccessToken from "./PersonalAccessToken.vue";
+
 export default {
+  components: { PersonalAccessToken },
   props: {
     value: Object,
   },
