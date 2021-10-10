@@ -6,9 +6,9 @@
           <v-card-title>
             {{ col.label }}
             <v-spacer />
-            <!-- <v-btn icon class="d-none d-md-flex">
+            <v-btn icon class="d-none d-md-flex" @click="onEditColumn(col)">
               <v-icon>settings</v-icon>
-            </v-btn> -->
+            </v-btn>
           </v-card-title>
           <v-card-text>
             <v-layout column fill-height>
@@ -22,17 +22,24 @@
         </v-card>
       </v-col>
     </v-row>
+    <edit-column
+      :value="isOpenEdition"
+      @input="onModalDisplayChange($event)"
+      :column="selectedColumn"
+      @updated="updateColumn($event)"
+    />
   </v-layout>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
 import WorkItem from "../components/WorkItem.vue";
+import EditColumn from "../components/EditColumn.vue";
 
 export default {
   name: "Home",
 
-  components: { WorkItem },
+  components: { WorkItem, EditColumn },
 
   computed: {
     ...mapState("board", {
@@ -58,9 +65,27 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isOpenEdition: false,
+      selectedColumn: undefined,
+    };
+  },
+
   methods: {
-    ...mapActions("referential", ["loadIterations"]),
+    ...mapActions("referential", ["loadIterations", "loadWorkItemTypes"]),
     ...mapActions("workItems", ["loadWorkItems"]),
+    ...mapActions("board", ["updateColumn"]),
+    onModalDisplayChange(isOpen) {
+      this.isOpenEdition = isOpen;
+      if (!isOpen) {
+        this.selectedColumn = undefined;
+      }
+    },
+    onEditColumn(column) {
+      this.selectedColumn = column;
+      this.isOpenEdition = true;
+    },
   },
 
   mounted() {
@@ -68,6 +93,7 @@ export default {
       teamId: this.team,
       projectId: this.project,
     }).then(() => this.loadWorkItems(this.teamContext));
+    this.loadWorkItemTypes(this.project);
   },
 };
 </script>

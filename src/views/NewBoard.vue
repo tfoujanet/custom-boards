@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import BoardColumn from "../components/BoardColumn.vue";
 import DevOpsAuth from "../components/DevOpsAuth.vue";
 export default {
@@ -75,6 +75,7 @@ export default {
       teams: (state) => state.teams,
       typeList: (state) => state.types,
     }),
+    ...mapGetters("board", ["workItemStatuses"]),
     canSave() {
       return (
         !!this.devopsAuth.organization &&
@@ -84,20 +85,6 @@ export default {
         this.types.length &&
         this.columns.length
       );
-    },
-    workItemStatuses() {
-      return this.typeList.reduce((acc, curr) => {
-        if (!this.types.includes(curr.name)) {
-          return acc;
-        }
-
-        return [
-          ...acc,
-          ...curr.states
-            .filter((s) => !acc.includes(s.name))
-            .map((_) => _.name),
-        ];
-      }, []);
     },
   },
 

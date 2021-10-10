@@ -5,9 +5,9 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon text v-if="hasBoard">
+      <!-- <v-btn icon text v-if="hasBoard">
         <v-icon>more_vert</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-app-bar>
 
     <v-main>
