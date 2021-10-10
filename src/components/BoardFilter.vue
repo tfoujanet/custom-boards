@@ -19,10 +19,10 @@ export default {
     ...mapGetters("workItems", ["members"]),
     selectedMembers: {
       get: function() {
-        return this.$store.state.boards?.selectedMembers || [];
+        return this.$store.state.workItems.filteredMembers || [];
       },
       set: function(val) {
-        this.$store.dispatch("boards/filterMembers", val);
+        this.$store.dispatch("workItems/filterMembers", val);
       },
     },
   },

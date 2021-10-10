@@ -23,9 +23,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .wrap-word {
-  word-break: normal;
+  word-break: normal !important;
   overflow-wrap: break-word;
 }
 </style>

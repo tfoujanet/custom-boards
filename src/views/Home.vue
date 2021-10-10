@@ -6,9 +6,9 @@
           <v-card-title>
             {{ col.label }}
             <v-spacer />
-            <v-btn icon class="d-none d-md-flex">
+            <!-- <v-btn icon class="d-none d-md-flex">
               <v-icon>settings</v-icon>
-            </v-btn>
+            </v-btn> -->
           </v-card-title>
           <v-card-text>
             <v-layout column fill-height>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import WorkItem from "../components/WorkItem.vue";
 
 export default {
@@ -41,11 +41,9 @@ export default {
       team: (_) => _.team,
       teamContext: (_) => ({ project: _.project, team: _.team }),
     }),
-    ...mapState("workItems", {
-      workItems: (_) => _.list,
-    }),
+    ...mapGetters("workItems", ["filteredWorkItem"]),
     columns() {
-      const selectedWorkItems = (this.workItems || []).filter((_) =>
+      const selectedWorkItems = (this.filteredWorkItem || []).filter((_) =>
         this.board.types.includes(_.type)
       );
       return (this.board.columns || []).map((_) => ({
