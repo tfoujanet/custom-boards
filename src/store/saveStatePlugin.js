@@ -1,5 +1,9 @@
 export const saveState = (state) => {
-  const newState = { auth: state.auth, boards: state.boards?.list }
+  const newState = {
+    auth: state.auth,
+    boards: state.boards?.list,
+    board: state.board,
+  };
   localStorage.setItem("state", JSON.stringify(newState));
 };
 

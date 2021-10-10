@@ -51,7 +51,8 @@ export const getIterations = (client, projectId, teamId) =>
           api.getTeamIterations({ projectId, teamId }),
           api.getTeamIterations({ projectId, teamId }, "current"),
         ])
-          .then(([iterations, [current]]) => {
+          .then(([iterations, currentIteration]) => {
+            const current = (currentIteration || [])[0] || {};
             resolve(
               iterations.map((_) => ({
                 id: _.id,
@@ -88,27 +89,45 @@ export const getIterationWorkItems = (client, projectId, teamId, iteration) =>
         api
           .getIterationWorkItems({ projectId, teamId }, iteration)
           .then(({ workItemRelations }) => {
-            resolve(workItemRelations.reduce((acc, curr) => {
-              const workItemIds = [curr.target?.id, curr.source?.id]
-                .filter(_ => !!_)
-                .filter(_ => !acc.some(c => c === _));
+            resolve(
+              workItemRelations.reduce((acc, curr) => {
+                const workItemIds = [curr.target?.id, curr.source?.id]
+                  .filter((_) => !!_)
+                  .filter((_) => !acc.some((c) => c === _));
 
-              return [...acc, ...workItemIds];
-            }, []));
+                return [...acc, ...workItemIds];
+              }, [])
+            );
           })
           .catch((e) => reject(e));
       })
       .catch((e) => reject(e));
   });
 
-export const getWorkItems = (client, ids) => new Promise((resolve, reject) => {
-  client.getWorkItemTrackingApi().then(api => {
-    api.getWorkItems(ids, ["System.WorkItemType", "System.State", "System.AssignedTo", "System.Title"]).then(workItems => resolve(workItems.map(_ => ({
-      id: _.id,
-      type: _.fields["System.WorkItemType"],
-      assignedTo: _.fields["System.AssignedTo"]?.displayName,
-      state: _.fields["System.State"],
-      title: _.fields["System.Title"]
-    })))).catch(e => reject(e));
-  }).catch(e => reject(e));
-});
+export const getWorkItems = (client, ids) =>
+  new Promise((resolve, reject) => {
+    client
+      .getWorkItemTrackingApi()
+      .then((api) => {
+        api
+          .getWorkItems(ids, [
+            "System.WorkItemType",
+            "System.State",
+            "System.AssignedTo",
+            "System.Title",
+          ])
+          .then((workItems) =>
+            resolve(
+              workItems.map((_) => ({
+                id: _.id,
+                type: _.fields["System.WorkItemType"],
+                assignedTo: _.fields["System.AssignedTo"]?.displayName,
+                state: _.fields["System.State"],
+                title: _.fields["System.Title"],
+              }))
+            )
+          )
+          .catch((e) => reject(e));
+      })
+      .catch((e) => reject(e));
+  });

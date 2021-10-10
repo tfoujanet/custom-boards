@@ -3,10 +3,11 @@
     <v-select
       :items="members"
       multiple
-      label="AssignedTo"
+      label="Assigned To"
       v-model="selectedMembers"
       dense
       hide-details
+      clearable
     ></v-select>
   </v-row>
 </template>
@@ -17,10 +18,10 @@ export default {
   computed: {
     ...mapGetters("workItems", ["members"]),
     selectedMembers: {
-      get: function () {
+      get: function() {
         return this.$store.state.boards?.selectedMembers || [];
       },
-      set: function (val) {
+      set: function(val) {
         this.$store.dispatch("boards/filterMembers", val);
       },
     },

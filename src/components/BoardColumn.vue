@@ -3,56 +3,29 @@
     <v-col>
       <v-text-field
         label="label"
-        :value="label"
-        @blur="label = $event.target.value"
+        :value="value.label"
+        @blur="$emit('input', { ...value, label: $event.target.value })"
       />
     </v-col>
-    <v-col v-for="(type, i) in types" :key="i">
+    <v-col>
       <v-select
-        :items="typeList(type)"
+        :items="statuses"
         multiple
-        :label="type"
+        label="Statuts"
         item-text="name"
         item-value="name"
-        :value="statesForType(type)"
-        @change="updateTypeStates(type, $event)"
+        :value="value.statuses"
+        @change="$emit('input', { ...value, statuses: $event })"
       ></v-select>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { mapState } from "vuex";
 export default {
-  props: ["value"],
-  computed: {
-    ...mapState("boards", {
-      types: (state) => state.current.types,
-    }),
-    ...mapState("referential", {
-      typeList: (state) => (typeName) =>
-        state.types.find((s) => s.name === typeName)?.states || [],
-    }),
-    label: {
-      get: function() {
-        return this.value.label;
-      },
-      set: function(val) {
-        this.$emit("change", { ...this.value, label: val });
-      },
-    },
-    statesForType() {
-      return (type) => (this.value.columns || {})[type];
-    },
-  },
-
-  methods: {
-    updateTypeStates(type, values) {
-      this.$emit("change", {
-        ...this.value,
-        columns: { ...this.value.columns, [type]: values },
-      });
-    },
+  props: {
+    value: Object,
+    statuses: Array,
   },
 };
 </script>

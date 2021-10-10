@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import store from "../store/index";
 
 Vue.use(VueRouter);
 
@@ -9,6 +10,13 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+    beforeEnter: (from, to, next) => {
+      if (to.path === "/" && !store.getters.hasBoard) {
+        next({ name: "NoBoard" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/about",
@@ -27,6 +35,12 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "settings" */ "../views/Settings.vue"),
+  },
+  {
+    path: "/no-board",
+    name: "NoBoard",
+    component: () =>
+      import(/* webpackChunkName: "board" */ "../views/NoBoard.vue"),
   },
   {
     path: "/new-board",

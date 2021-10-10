@@ -1,58 +1,75 @@
 <template>
-  <v-layout fill-height>
-    <v-row v-if="!isLogged" justify="center">
-      <v-col cols="6">
-        <v-alert color="error" icon="warning">
-          Aucune info de connexion, veuillez saisir des infos de connexion dans
-          les paramètres.
-        </v-alert>
+  <v-layout fill-height column>
+    <v-row>
+      <v-col v-for="(col, i) in columns" :key="i">
+        <v-card>
+          <v-card-title>
+            {{ col.label }}
+            <v-spacer />
+            <v-btn icon class="d-none d-md-flex">
+              <v-icon>settings</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-layout column fill-height>
+              <work-item
+                v-for="(wi, i) in col.workItems"
+                :key="i"
+                :value="wi"
+              />
+            </v-layout>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
-    <template v-else>
-      <v-container fluid>
-        <v-alert type="info" text dense v-if="!boards.length">
-          Vous n'avez pas encore de boards, vous pouvez en créer un en cliquant
-          sur le bouton '+'
-        </v-alert>
-        <v-row>
-          <v-col v-for="(board, i) in boards" :key="i">
-            <v-card
-              style="cursor: pointer"
-              @click="$router.push(`/board/${board.id}`)"
-            >
-              <v-card-title>{{ board.name }}</v-card-title>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-    <v-btn
-      elevation="2"
-      fixed
-      fab
-      bottom
-      right
-      :disabled="!isLogged"
-      color="success"
-      @click="$router.push('/new-board')"
-    >
-      <v-icon>add</v-icon>
-    </v-btn>
   </v-layout>
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+import WorkItem from "../components/WorkItem.vue";
+
 export default {
   name: "Home",
 
+  components: { WorkItem },
+
   computed: {
-    isLogged() {
-      const { token, organization } = this.$store.state.auth || {};
-      return !!token && !!organization;
+    ...mapState("board", {
+      board: (_) => _,
+      project: (_) => _.project,
+      team: (_) => _.team,
+      teamContext: (_) => ({ project: _.project, team: _.team }),
+    }),
+    ...mapState("workItems", {
+      workItems: (_) => _.list,
+    }),
+    columns() {
+      const selectedWorkItems = (this.workItems || []).filter((_) =>
+        this.board.types.includes(_.type)
+      );
+      return (this.board.columns || []).map((_) => ({
+        ..._,
+        workItems: selectedWorkItems
+          .filter((wi) => _.statuses.includes(wi.state))
+          .map((wi) => ({
+            ...wi,
+            url: `https://dev.azure.com/${this.board.organization}/${this.board.project}/_workitems/edit/${wi.id}/`,
+          })),
+      }));
     },
-    boards() {
-      return this.$store.state.boards.list || [];
-    },
+  },
+
+  methods: {
+    ...mapActions("referential", ["loadIterations"]),
+    ...mapActions("workItems", ["loadWorkItems"]),
+  },
+
+  mounted() {
+    this.loadIterations({
+      teamId: this.team,
+      projectId: this.project,
+    }).then(() => this.loadWorkItems(this.teamContext));
   },
 };
 </script>

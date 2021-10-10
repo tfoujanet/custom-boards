@@ -5,8 +5,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon text @click="$router.push('/settings')">
-        <v-icon>account_circle</v-icon>
+      <v-btn icon text v-if="hasBoard">
+        <v-icon>more_vert</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import BoardFilter from "./components/BoardFilter.vue";
 export default {
   name: "App",
@@ -29,17 +30,18 @@ export default {
   }),
 
   computed: {
+    ...mapGetters(["hasBoard"]),
     actionBar() {
-      switch(this.$route.name) {
-        case "Board":
+      switch (this.$route.name) {
+        case "Home":
           return BoardFilter;
         default:
           return undefined;
       }
-    }
+    },
   },
 
-  mounted() {
+  created() {
     this.$store.dispatch("auth/connect");
   },
 };
