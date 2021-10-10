@@ -1,3 +1,9 @@
+import Vue from "vue";
+import VueClipboard from "vue-clipboard2";
+
+VueClipboard.config.autoSetContainer = true;
+Vue.use(VueClipboard);
+
 Array.prototype.sortBy = function(prop) {
   return this.sort((a, b) => {
     const propA = a[prop];
