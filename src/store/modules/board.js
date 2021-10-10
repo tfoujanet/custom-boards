@@ -1,3 +1,5 @@
+import { isBoardValid } from "../../services/board-validation";
+
 const BOARD_UPDATED = "BOARD_UPDATED";
 
 const state = {
@@ -23,6 +25,17 @@ const actions = {
     const columns = [...state.columns];
     columns[columnIndex] = { ...columns[columnIndex], label, statuses };
     commit(BOARD_UPDATED, { columns });
+  },
+  importBoard({ commit }, { token, content }) {
+    const serialied = JSON.parse(content || "{}");
+    const newBoard = { token, ...serialied };
+
+    if (isBoardValid(newBoard)) {
+      commit(BOARD_UPDATED, newBoard);
+      return Promise.resolve(true);
+    }
+
+    return Promise.reject("");
   },
 };
 

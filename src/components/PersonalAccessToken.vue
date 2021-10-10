@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    label="Token"
+    :label="label"
     :value="value"
     @blur="$emit('input', $event.target.value)"
     hint="Ce token doit être un Personal Access Token à générer depuis Azure DevOps"
@@ -43,6 +43,11 @@
 export default {
   props: {
     value: String,
+    label: {
+      type: String,
+      required: false,
+      default: "Token",
+    },
   },
   methods: {
     showTokenHelp() {},

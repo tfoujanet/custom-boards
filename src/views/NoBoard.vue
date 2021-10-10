@@ -14,14 +14,23 @@
         <v-icon>add</v-icon>
         Ajouter
       </v-btn>
-      <v-btn color="secondary">
+      <v-btn color="secondary" @click="isImport = true">
         <v-icon>file_download</v-icon>
         Importer
       </v-btn>
     </v-card-actions>
+    <import-board v-model="isImport" @imported="$router.push('/')" />
   </v-card>
 </template>
 
 <script>
-export default {};
+import ImportBoard from "../components/ImportBoard.vue";
+export default {
+  components: { ImportBoard },
+  data() {
+    return {
+      isImport: false,
+    };
+  },
+};
 </script>
