@@ -17,8 +17,11 @@ steps:
 
 - script: |
     npm install
+  displayName: 'npm install'
+
+- script: |
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'npm build'
   
 - task: AzureFileCopy@4
   inputs:
@@ -26,4 +29,4 @@ steps:
     Destination: 'AzureBlob'
     storage: 'customazureboards'
     ContainerName: '$web'
-    SourcePath: '${Pipeline.Workspace}/dist'
+    SourcePath: 'dist'
