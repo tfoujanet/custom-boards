@@ -1,0 +1,29 @@
+# Node.js with Vue
+# Build a Node.js project that uses Vue.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+  
+- task: AzureFileCopy@4
+  inputs:
+    azureSubscription: 'Personnel(6a29d2a7-3b90-4875-af07-35601e78839a)'
+    Destination: 'AzureBlob'
+    storage: 'customazureboards'
+    ContainerName: '$web'
+    SourcePath: '${Pipeline.Workspace}/dist'
