@@ -44,8 +44,8 @@ const actions = {
 
 const getters = {
   currentIteration(state) {
-    return state.iterations.find(_ => _.current);
-  }
+    return state.iterations.find((_) => _.current);
+  },
 };
 
 const mutations = {

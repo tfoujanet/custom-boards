@@ -21,6 +21,14 @@
               Exporter
             </v-list-item-title>
           </v-list-item>
+          <v-list-item @click="config = true">
+            <v-list-item-icon>
+              <v-icon>settings</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Paramètres
+            </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
@@ -30,17 +38,22 @@
         <router-view />
       </v-container>
     </v-main>
+
+    <board-config v-model="config" />
   </v-app>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
 import BoardFilter from "./components/BoardFilter.vue";
+import BoardConfig from "./components/BoardConfig.vue";
 export default {
   name: "App",
-  components: { BoardFilter },
+  components: { BoardFilter, BoardConfig },
 
-  data: () => ({}),
+  data: () => ({
+    config: false,
+  }),
 
   computed: {
     ...mapGetters(["hasBoard"]),
