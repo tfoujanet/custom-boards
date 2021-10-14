@@ -31,4 +31,4 @@ steps:
     Destination: 'AzureBlob'
     storage: 'customazureboards'
     ContainerName: '$web'
-    SourcePath: '${Pipeline.Workspace}/dist'
+    SourcePath: 'dist'
