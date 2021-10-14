@@ -26,12 +26,13 @@ const actions = {
     columns[columnIndex] = { ...columns[columnIndex], label, statuses };
     commit(BOARD_UPDATED, { columns });
   },
-  importBoard({ commit }, { token, content }) {
+  importBoard({ commit, dispatch }, { token, content }) {
     const serialied = JSON.parse(content || "{}");
     const newBoard = { token, ...serialied };
 
     if (isBoardValid(newBoard)) {
       commit(BOARD_UPDATED, newBoard);
+      dispatch("auth/connect", undefined, { root: true });
       return Promise.resolve(true);
     }
 

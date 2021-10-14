@@ -1,4 +1,5 @@
 import * as azdev from "azure-devops-node-api";
+import { splitArrayInChunks } from "./array-helper";
 
 export const connect = (orgName, token) => {
   const orgUrl = `https://dev.azure.com/${orgName}`;
@@ -109,24 +110,29 @@ export const getWorkItems = (client, ids) =>
     client
       .getWorkItemTrackingApi()
       .then((api) => {
-        api
-          .getWorkItems(ids, [
-            "System.WorkItemType",
-            "System.State",
-            "System.AssignedTo",
-            "System.Title",
-          ])
-          .then((workItems) =>
-            resolve(
-              workItems.map((_) => ({
+        Promise.all(
+          splitArrayInChunks(ids, 200).map((idList) =>
+            api.getWorkItems(idList, [
+              "System.WorkItemType",
+              "System.State",
+              "System.AssignedTo",
+              "System.Title",
+            ])
+          )
+        )
+          .then((results) => {
+            const workItems = results.reduce((acc, curr) => {
+              const newItems = curr.map((_) => ({
                 id: _.id,
                 type: _.fields["System.WorkItemType"],
                 assignedTo: _.fields["System.AssignedTo"]?.displayName,
                 state: _.fields["System.State"],
                 title: _.fields["System.Title"],
-              }))
-            )
-          )
+              }));
+              return [...acc, ...newItems];
+            }, []);
+            resolve(workItems);
+          })
           .catch((e) => reject(e));
       })
       .catch((e) => reject(e));
