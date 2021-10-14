@@ -25,10 +25,13 @@ const actions = {
 const getters = {
   members(state) {
     return state.list.reduce((acc, current) => {
-      return !current.assignedTo || acc.includes(current.assignedTo)
+      return acc.includes(current.assignedTo)
         ? acc
         : [...acc, current.assignedTo];
     }, []);
+  },
+  hasUnassigned(state) {
+    return state.list.some((_) => !_.assignedTo);
   },
   filteredWorkItem(state) {
     return state.filteredMembers.length
