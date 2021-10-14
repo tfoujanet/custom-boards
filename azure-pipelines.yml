@@ -10,11 +10,6 @@ pool:
   vmImage: windows-latest
 
 steps:
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |      
-      Uninstall-AzureRm
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
