@@ -105,7 +105,7 @@ export default {
     updateColor(type, color) {
       this.update({
         colors: {
-          ...this.colors,
+          ...(this.colors || {}),
           [type]: color,
         },
       });
