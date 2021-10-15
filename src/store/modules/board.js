@@ -9,6 +9,7 @@ const state = {
   team: "",
   types: [],
   columns: [],
+  colors: {}
 };
 
 const actions = {

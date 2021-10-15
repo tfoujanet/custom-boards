@@ -26,7 +26,9 @@ export default {
     }),
     color() {
       const selectedColor = this.colors[this.value.type];
-      return selectedColor && `${selectedColor} lighten-3`;
+      return selectedColor 
+        ? `${selectedColor} lighten-3` 
+        : undefined;
     },
   },
 
